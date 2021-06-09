@@ -38,6 +38,35 @@ void linked_list_insert_end(linked_list *l, int value) {
     element->next = new;  // guardamos o novo elemento no lugar dele
 }
 
+int linked_list_insert_at(linked_list *l, int value, int index) {
+    node *new = malloc(sizeof(node));
+    new->value = value;
+    new->next = NULL;
+
+    if (l->first == NULL) {
+        l->first = new;
+        return 0;
+    }
+
+    if (index == 0) {
+        new->next = l->first;
+        l->first = new;
+        return 0;
+    }
+
+    node *el = l->first;
+
+    int i = 0;
+    while (i < index - 1 && el->next != NULL) {
+        el = el->next;
+        i++;
+    }
+    node *next = el->next;
+    new->next = next;
+    el->next = new;
+    return i;
+}
+
 int linked_list_size(linked_list *l) {
     node *current = l->first;
     int size = 0;
@@ -58,6 +87,14 @@ int linked_list_get(linked_list *l, int index) {
     return element->value;  // devolve o elemento n posição 'i'
 }
 void linked_list_remove(linked_list *l, int index) {
+    if (index == 0) {
+        node *first = l->first;
+        l->first = first->next;
+        free(first);
+        first = NULL;
+        return;
+    }
+
     int i = 0;
     node *previous = l->first;
     while (i < index - 1) {
@@ -82,26 +119,57 @@ void linked_list_delete(linked_list **_l) {
     *_l = NULL;                // limpamos o endereço da variável local
 }
 
+void print_list(linked_list *list) {
+    if (linked_list_empty(list)) {
+        printf("[]\n");
+    } else {
+        printf("[");
+        int size = linked_list_size(list);
+        for (int i = 0; i < size - 1; i++) {
+            printf(" %d,", linked_list_get(list, i));
+        }
+        printf(" %d", linked_list_get(list, size - 1));
+        printf(" ]\n");
+    }
+}
+
 int main() {
     linked_list *list = linked_list_new();
 
-    linked_list_insert_end(list, 1);
     linked_list_insert_end(list, 2);
+    print_list(list);
+
     linked_list_insert_end(list, 3);
-    linked_list_insert_end(list, 4);
-    linked_list_remove(list, 2);  // value == 3
-    linked_list_insert_end(list, 3);
+    print_list(list);
+
+    linked_list_insert_end(list, 5);
+    print_list(list);
+
+    linked_list_insert_end(list, 6);
+    print_list(list);
+
+    linked_list_insert_at(list, 4, 2);  // inserir no meio
+    print_list(list);
+
+    linked_list_insert_at(list, 1, 0);  // inserir no começo
+    print_list(list);
 
     int size = linked_list_size(list);
 
-    printf("Size: %d\n", size);
+    linked_list_insert_at(list, size + 1, size);  // inserir no fim
+    print_list(list);
 
-    for (int i = 0; i < size; i++) {
-        printf("[%d]: %d\n", i, linked_list_get(list, i));
-    }
+    linked_list_remove(list, 0);  // remover do começo
+    print_list(list);
+
+    size = linked_list_size(list);
+    linked_list_remove(list, size - 1);  // remover do fim
+    print_list(list);
+
+    linked_list_remove(list, 2);  // remover do meio
+    print_list(list);
 
     linked_list_delete(&list);
-    printf("list: %p\n", list);
-    
+
     return 0;
 }

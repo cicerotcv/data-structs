@@ -11,7 +11,7 @@ int linked_list_empty(linked_list *l);
 int linked_list_size(linked_list *l);
 void linked_list_insert_end(linked_list *l, int value);
 int linked_list_get(linked_list *l, int index);
+int linked_list_insert_at(linked_list *l, int value, int index);
 void linked_list_remove(linked_list *l, int index);
-int linked_list_pop(linked_list *l);
 
 #endif
